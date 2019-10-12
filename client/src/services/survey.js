@@ -1,5 +1,7 @@
 import _ from 'lodash'
 
+import requestApi from '../utils/requestApi'
+
 const { API_KEY } = process.env
 
 const CANCEL_WORKSPACE = {
@@ -82,18 +84,11 @@ export const submitToSurveyMonkeyDeleteAccount = async ({
 }) => {
   const surveyPayload = getSurveyPayload(feedbackRefs, comment)
 
-  const response = await window.fetch(
-    `${API_KEY}/submitSurvey`,
-    {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(surveyPayload),
-    }
-  )
-  if (response.status !== 200) {
+  try {
+    await requestApi.post(`${API_KEY}/submitSurvey`, {
+      body: surveyPayload
+    })
+  } catch (err) {
     throw new Error('Error submitting SurveyMonkey')
   }
 }

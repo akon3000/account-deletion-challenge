@@ -1,6 +1,7 @@
 import React from 'react'
 
 import * as LoadState from '../LoadState'
+import requestApi from '../utils/requestApi'
 
 const { API_KEY } = process.env
 const MocDataContext = React.createContext()
@@ -29,15 +30,21 @@ class MockDataProvider extends React.Component {
   }
 
   fetchRelatedWorkspaces = async () => {
-    const response = await window.fetch(`${API_KEY}/fetchWorkspaces?userId=${this.state.user._id}`, {
-      mode: 'cors',
-    })
-    const data = await response.json()
-    this.setState({
-      loading: false,
-      requiredTransferWorkspaces: data.requiredTransferWorkspaces,
-      deleteWorkspaces: data.deleteWorkspaces,
-    })
+    try {
+      const response = await requestApi.get(`${API_KEY}/fetchWorkspaces`, {
+        query: {
+          userId: this.state.user._id
+        }
+      })
+      const data = await response.json()
+      this.setState({
+        loading: false,
+        requiredTransferWorkspaces: data.requiredTransferWorkspaces,
+        deleteWorkspaces: data.deleteWorkspaces,
+      })
+    } catch (err) {
+      alert(`Error status ${err.status}`)
+    }
   }
 
   transferOwnership = (user, workspace) => {
@@ -50,27 +57,24 @@ class MockDataProvider extends React.Component {
         },
       },
       async () => {
-        const response = await window.fetch(`${API_KEY}/checkOwnership`, {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            workspaceId: workspace.spaceId,
-            fromUserId: this.state.user._id,
-            toUserId: user._id,
-          }),
-        })
-        if (response.status === 200) {
-          this.setState({
-            transferOwnershipStatus: {
+        try {
+          const response = await requestApi.post(`${API_KEY}/checkOwnership`, {
+            body: {
               workspaceId: workspace.spaceId,
+              fromUserId: this.state.user._id,
               toUserId: user._id,
-              ...LoadState.completed,
-            },
+            }
           })
-        } else {
+          if (response.status === 200) {
+            this.setState({
+              transferOwnershipStatus: {
+                workspaceId: workspace.spaceId,
+                toUserId: user._id,
+                ...LoadState.completed,
+              },
+            })
+          }
+        } catch (err) {
           this.setState({
             transferOwnershipStatus: {
               workspaceId: workspace.spaceId,
@@ -84,22 +88,19 @@ class MockDataProvider extends React.Component {
   }
 
   terminateAccount = async payload => {
-    // Note that there is 30% chance of getting error from the server
-    const response = await window.fetch(`${API_KEY}/terminateAccount`, {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-    if (response.status === 200) {
-      this.setState({
-        terminateAccountStatus: LoadState.handleLoaded(
-          this.state.terminateAccountStatus
-        ),
+    try {
+      // Note that there is 30% chance of getting error from the server
+      const response = await requestApi.post(`${API_KEY}/terminateAccount`, {
+        body: payload
       })
-    } else {
+      if (response.status === 200) {
+        this.setState({
+          terminateAccountStatus: LoadState.handleLoaded(
+            this.state.terminateAccountStatus
+          ),
+        })
+      }
+    } catch (err) {
       this.setState({
         terminateAccountStatus: LoadState.handleLoadFailedWithError(
           'Error deleting account'
