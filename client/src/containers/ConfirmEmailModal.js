@@ -30,7 +30,7 @@ class ConfirmEmailModal extends React.PureComponent {
     this.setState({ markedConsequences: !this.state.markedConsequences })
   }
 
-  renderFormInputPasssword = () => {
+  renderFormInputPassword = () => {
     const errorMessage = _.get(this.props.terminateAccountStatus, 'error', null)
     return (
       <div>
@@ -50,7 +50,7 @@ class ConfirmEmailModal extends React.PureComponent {
       <div>
         <h1>Delete account</h1>
         <p>This action cannot be undone.</p>
-        <div>Please enter your email: {this.renderFormInputPasssword()}</div>
+        <div>Please enter your email: {this.renderFormInputPassword()}</div>
         <div style={{ marginTop: '1rem' }}>
           <label>
             <input

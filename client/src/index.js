@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom'
 
 import './index.css'
 
-import MockDataProvider from './MockDataProvider'
+import MockDataContext from './contexts/MockDataContext'
 import TerminateModalFlow from './containers/TerminateModalFlow'
 
 ReactDOM.render(
-  <MockDataProvider>
+  <MockDataContext>
     {props => <TerminateModalFlow {...props} />}
-  </MockDataProvider>,
+  </MockDataContext>,
   document.getElementById('root')
 )
 
