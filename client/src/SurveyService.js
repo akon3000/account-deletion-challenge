@@ -1,5 +1,7 @@
 import _ from 'lodash'
 
+const { API_KEY } = process.env
+
 const CANCEL_WORKSPACE = {
   PAGE_ID: '48414504',
   MULTIPLE_CHOICES_ID: '162037852',
@@ -81,7 +83,7 @@ export const submitToSurveyMonkeyDeleteAccount = async ({
   const surveyPayload = getSurveyPayload(feedbackRefs, comment)
 
   const response = await window.fetch(
-    'https://us-central1-tw-account-deletion-challenge.cloudfunctions.net/submitSurvey',
+    `${API_KEY}/submitSurvey`,
     {
       method: 'POST',
       mode: 'cors',

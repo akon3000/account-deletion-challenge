@@ -123,6 +123,7 @@ export default class MockDataProvider extends React.Component {
       },
 
       terminateAccountStatus: {},
+
       resetTerminateAccountStatus: () => {
         this.setState({
           terminateAccountStatus: LoadState.pending,
