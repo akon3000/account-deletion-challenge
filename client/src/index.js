@@ -5,6 +5,8 @@ import './index.css'
 import MockDataProvider from './MockDataProvider'
 import TerminateModalFlow from './TerminateModalFlow.react'
 
+console.log(process.env.API_KEY, process.env.NODE_ENV)
+
 ReactDOM.render(
   <MockDataProvider>
     {props => <TerminateModalFlow {...props} />}
