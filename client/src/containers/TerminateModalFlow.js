@@ -5,7 +5,8 @@ import React from 'react'
 import * as LoadState from '../LoadState'
 import { submitToSurveyMonkeyDeleteAccount } from '../SurveyService'
 import AssignOwnership from '../components/AssignOwnership'
-import TransferOwnershipModal, { WorkspaceGroupRows } from '../components/TransferOwnershipModal'
+import WorkspaceGroupRows from '../components/WorkspaceGroupRows'
+import TransferOwnershipContainer from '../components/TransferOwnership'
 import ConfirmEmailModal from './ConfirmEmailModal'
 import FeedbackSurveyModal from './FeedbackSurveyModal'
 
@@ -166,7 +167,7 @@ export default class TerminateModalFlow extends React.Component {
     const disabledNextPage =
       totalAssigned < totalWorkspaceRequiredTransfer || this.props.loading
     return (
-      <TransferOwnershipModal
+      <TransferOwnershipContainer
         nextPage={this.onSetNextPage}
         loading={this.props.loading}
         disabledNextPage={disabledNextPage}
@@ -187,7 +188,7 @@ export default class TerminateModalFlow extends React.Component {
           groupTitle="The following workspaces will be deleted:"
           shouldDisplay={totalWorkspaceDelete > 0}
         />
-      </TransferOwnershipModal>
+      </TransferOwnershipContainer>
     )
   }
 
