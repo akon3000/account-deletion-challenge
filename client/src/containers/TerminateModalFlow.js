@@ -10,6 +10,10 @@ import TransferOwnershipContainer from '../components/TransferOwnership'
 import ConfirmEmailModal from './ConfirmEmailModal'
 import FeedbackSurveyModal from './FeedbackSurveyModal'
 
+const FeedbackSurveyForm = React.forwardRef((props, ref) => (
+  <FeedbackSurveyModal {...props} ref={ref} />
+))
+
 export default class TerminateModalFlow extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
@@ -32,6 +36,12 @@ export default class TerminateModalFlow extends React.Component {
     feedbacks: [],
     comment: '',
     email: '',
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.feedbackFormRef = React.createRef()
   }
 
   componentDidMount() {
@@ -83,32 +93,39 @@ export default class TerminateModalFlow extends React.Component {
   }
 
   getRefsValues(refs, refName) {
-    const item = _.get(refs, refName, false)
-    if (!item || _.isEmpty(item.refs)) return {}
+    const items = _.get(refs, refName, false)
+    if (!items || _.isEmpty(items)) return {}
 
-    const keys = Object.keys(item.refs)
+    const keys = Object.keys(items)
     const collection = []
     for (const key of keys) {
-      const value = item.refs[key].value
-      collection.push({ key, value })
+      if (items[key] !== null) { // user has checked and unchecked after that.
+        const value = items[key].value
+        collection.push({ key, value })
+      }
     }
     return collection
   }
 
-  submitSurvey = () => {
-    const feedbackRefs = this.getRefsValues(this.refs, 'feedbackForm')
-    const surveyPayload = {
-      feedbackRefs,
-      comment: '',
-    }
+  submitSurvey = feedbackRefs => {
+    /**
+     * this.refs likely to be removed in one of the future releases.
+     * React 16.3 or more than [https://reactjs.org/docs/refs-and-the-dom.html#legacy-api-string-refs]
+     * 
+     * const feedbackRefs = this.getRefsValues(this.refs, 'feedbackForm')
+     */
+
+    const surveyPayload = { feedbackRefs, comment: '' }
+
     submitToSurveyMonkeyDeleteAccount(surveyPayload)
   }
 
-  onSetNextPage = () => {
+  onSetNextPage = async () => {
     if (this.state.activeModal === 'transfer') {
       this.setState({ activeModal: 'feedback' })
     } else if (this.state.activeModal === 'feedback') {
-      const feedbackRefs = this.getRefsValues(this.refs, 'feedbackForm')
+      const feedbackRefs = this.getRefsValues(this.feedbackFormRef.current, 'feedbackRefs')
+      this.submitSurvey(feedbackRefs)
       this.setState({
         activeModal: 'confirm',
         feedbacks: _.map(feedbackRefs, ref => ({
@@ -117,7 +134,6 @@ export default class TerminateModalFlow extends React.Component {
         })),
       })
     }
-    this.submitSurvey()
   }
 
   onGoToPreviousStep = () => {
@@ -198,9 +214,9 @@ export default class TerminateModalFlow extends React.Component {
         return this.renderTransferModal()
       case 'feedback':
         return (
-          <FeedbackSurveyModal
-            ref="feedbackForm"
-            title="Why would you leave us?"
+          <FeedbackSurveyForm
+            ref={this.feedbackFormRef}
+            title='Why would you leave us?'
             onSubmit={this.onSetNextPage}
             onBackButton={this.onGoToPreviousStep}
             showCommentForm
