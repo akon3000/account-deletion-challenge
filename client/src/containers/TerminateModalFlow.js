@@ -38,6 +38,13 @@ export default class TerminateModalFlow extends React.Component {
     email: '',
   }
 
+  static getDerivedStateFromProps(props) {
+    if (LoadState.isLoaded(props.terminateAccountStatus)) {
+      props.redirectToHomepage()
+    }
+    return null
+  }
+
   constructor(props) {
     super(props)
 
@@ -46,12 +53,6 @@ export default class TerminateModalFlow extends React.Component {
 
   componentDidMount() {
     this.props.fetchRelatedWorkspaces()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (LoadState.isLoaded(nextProps.terminateAccountStatus)) {
-      this.props.redirectToHomepage()
-    }
   }
 
   getTransferData = () => {
