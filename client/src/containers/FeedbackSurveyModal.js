@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import PropTypes from 'prop-types'
 import React from 'react'
+import PropTypes from 'prop-types'
 
-import { feedbackSurveyItems } from '../FeedbackSurveyItems'
+import { feedbackSurveyItems } from '../constants/survey'
 
 class FeedbackSurveyModal extends React.PureComponent {
   static propTypes = {

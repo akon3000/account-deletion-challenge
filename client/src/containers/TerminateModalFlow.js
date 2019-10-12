@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import * as LoadState from '../LoadState'
-import { submitToSurveyMonkeyDeleteAccount } from '../SurveyService'
+import { submitToSurveyMonkeyDeleteAccount } from '../services/survey'
 import AssignOwnership from '../components/AssignOwnership'
 import WorkspaceGroupRows from '../components/WorkspaceGroupRows'
 import TransferOwnershipContainer from '../components/TransferOwnership'
