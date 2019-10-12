@@ -3,6 +3,8 @@ import React from 'react'
 
 import * as LoadState from './LoadState'
 
+const { API_KEY } = process.env
+
 export default class MockDataProvider extends React.Component {
   static propTypes = {
     children: PropTypes.func.isRequired,
@@ -27,14 +29,9 @@ export default class MockDataProvider extends React.Component {
       transferableMembers: [],
 
       fetchRelatedWorkspaces: async () => {
-        const response = await window.fetch(
-          `https://us-central1-tw-account-deletion-challenge.cloudfunctions.net/fetchWorkspaces?userId=${
-            this.state.user._id
-          }`,
-          {
-            mode: 'cors',
-          }
-        )
+        const response = await window.fetch(`${API_KEY}/fetchWorkspaces?userId=${this.state.user._id}`, {
+          mode: 'cors',
+        })
         const data = await response.json()
         this.setState({
           loading: false,
@@ -59,21 +56,18 @@ export default class MockDataProvider extends React.Component {
             },
           },
           async () => {
-            const response = await window.fetch(
-              'https://us-central1-tw-account-deletion-challenge.cloudfunctions.net/checkOwnership',
-              {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  workspaceId: workspace.spaceId,
-                  fromUserId: this.state.user._id,
-                  toUserId: user._id,
-                }),
-              }
-            )
+            const response = await window.fetch(`${API_KEY}/checkOwnership`, {
+              method: 'POST',
+              mode: 'cors',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                workspaceId: workspace.spaceId,
+                fromUserId: this.state.user._id,
+                toUserId: user._id,
+              }),
+            })
             if (response.status === 200) {
               this.setState({
                 transferOwnershipStatus: {
@@ -97,17 +91,14 @@ export default class MockDataProvider extends React.Component {
 
       terminateAccount: async payload => {
         // Note that there is 30% chance of getting error from the server
-        const response = await window.fetch(
-          'https://us-central1-tw-account-deletion-challenge.cloudfunctions.net/terminateAccount',
-          {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-          }
-        )
+        const response = await window.fetch(`${API_KEY}/terminateAccount`, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        })
         if (response.status === 200) {
           this.setState({
             terminateAccountStatus: LoadState.handleLoaded(
