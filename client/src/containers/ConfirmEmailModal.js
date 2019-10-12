@@ -1,8 +1,9 @@
 import _ from 'lodash'
-import PropTypes from 'prop-types'
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { isLoading } from '../LoadState'
+import Input from '../components/Input'
 
 class ConfirmEmailModal extends React.PureComponent {
   static propTypes = {
@@ -30,27 +31,22 @@ class ConfirmEmailModal extends React.PureComponent {
     this.setState({ markedConsequences: !this.state.markedConsequences })
   }
 
-  renderFormInputPassword = () => {
-    const errorMessage = _.get(this.props.terminateAccountStatus, 'error', null)
-    return (
-      <div>
-        <input
-          type="text"
-          placeholder="ross@example.com"
-          style={{ width: '350px' }}
-          onChange={this.props.onTypeEmail}
-        />
-        <span style={{ color: 'red' }}>{errorMessage}</span>
-      </div>
-    )
-  }
-
   render() {
+    const errorMessage = _.get(this.props.terminateAccountStatus, 'error', null)
+
     return (
       <div>
         <h1>Delete account</h1>
         <p>This action cannot be undone.</p>
-        <div>Please enter your email: {this.renderFormInputPassword()}</div>
+        <div>
+          Please enter your email:
+          <Input
+            style={{ width: '350px' }}
+            errorMessage={errorMessage}
+            placeholder='ross@example.com'
+            onChange={this.props.onTypeEmail}
+          />
+        </div>
         <div style={{ marginTop: '1rem' }}>
           <label>
             <input
